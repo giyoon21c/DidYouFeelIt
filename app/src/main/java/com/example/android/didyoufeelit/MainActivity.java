@@ -42,32 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Kick off an {@link AsyncTask} to perform the network request
         SoonamiAsyncTask task = new SoonamiAsyncTask();
-        task.execute();
+        // pass in the specific URL which will be stored in String[] as "String... urls"
+        task.execute(USGS_REQUEST_URL);
 
         // Perform the HTTP request for earthquake data and process the response.
         //Event earthquake = Utils.fetchEarthquakeData(USGS_REQUEST_URL);
 
         // Update the information displayed to the user.
         //updateUi(earthquake);
-    }
-
-
-    private class SoonamiAsyncTask extends AsyncTask<String, Void, Event> {
-        @Override
-        protected Event doInBackground(String... url) {
-            // Extract relevant fields from the JSON response and create an {@link Event} object
-            Event earthquake = Utils.fetchEarthquakeData(USGS_REQUEST_URL);
-            return earthquake;
-        }
-
-        @Override
-        protected void onPostExecute(Event earthquake) {
-            if (earthquake == null) {
-                return;
-            }
-            updateUi(earthquake);
-            //Log.i(TAG, result);
-        }
     }
 
     /**
@@ -83,4 +65,25 @@ public class MainActivity extends AppCompatActivity {
         TextView magnitudeTextView = (TextView) findViewById(R.id.perceived_magnitude);
         magnitudeTextView.setText(earthquake.perceivedStrength);
     }
+
+    /**
+     *
+     */
+    private class SoonamiAsyncTask extends AsyncTask<String, Void, Event> {
+        @Override
+        protected Event doInBackground(String... urls) {
+            // Extract relevant fields from the JSON response and create an {@link Event} object
+            Event result = Utils.fetchEarthquakeData(urls[0]);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Event earthquake) {
+            if (earthquake == null) {
+                return;
+            }
+            updateUi(earthquake);
+        }
+    }
 }
+
